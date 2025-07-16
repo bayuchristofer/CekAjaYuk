@@ -1,0 +1,50 @@
+{
+  "timestamp": "2025-07-12T20:26:59.469458",
+  "methods_compared": {
+    "fixed_60_40": {
+      "accuracy": 0.955,
+      "weights": {
+        "rf": 0.6,
+        "text": 0.4
+      },
+      "method": "Fixed empirical weights"
+    },
+    "equal_weights": {
+      "accuracy": 0.975,
+      "weights": {
+        "rf": 0.33,
+        "cnn": 0.33,
+        "text": 0.33
+      },
+      "method": "Equal weighting"
+    },
+    "cv_optimized": {
+      "accuracy": 0.975,
+      "weights": {
+        "random_forest": 0.3333333333333333,
+        "cnn": 0.3333333333333333,
+        "text_analysis": 0.3333333333333333
+      },
+      "method": "Cross-validation optimized (Kuncheva, 2004)"
+    },
+    "de_optimized": {
+      "accuracy": 0.98,
+      "weights": {
+        "random_forest": 0.29104917476147396,
+        "cnn": 0.19895612674863458,
+        "text_analysis": 0.5099946984898913
+      },
+      "method": "Differential evolution optimized"
+    },
+    "best_fusion": {
+      "accuracy": 1.0,
+      "method": "Multi-modal fusion: Feature-level concatenation"
+    }
+  },
+  "literature_references": [
+    "Kuncheva, L. I. (2004). Combining Pattern Classifiers: Methods and Algorithms",
+    "Baltrusaitis, T., et al. (2018). Multimodal Machine Learning: A Survey and Taxonomy",
+    "Xu, L., et al. (1992). Methods of Combining Multiple Classifiers",
+    "Wolpert, D. H. (1992). Stacked Generalization"
+  ]
+}

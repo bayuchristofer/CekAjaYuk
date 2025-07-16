@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CekAjaYuk - Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+        .success { border-left-color: #28a745; }
+        .error { border-left-color: #dc3545; }
+        .loading { border-left-color: #17a2b8; }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #218838; }
+        .status { font-weight: bold; }
+        pre { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 CekAjaYuk Connection Test</h1>
+        <p>Test koneksi antara frontend dan backend API</p>
+        
+        <button onclick="testAllConnections()">🔄 Test All Connections</button>
+        <button onclick="openMainApp()">🚀 Open Main App</button>
+        
+        <div id="results">
+            <div class="test-item loading">
+                <div class="status">⏳ Ready to test...</div>
+                <div>Click "Test All Connections" to start</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        async function testAllConnections() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            
+            // Test 1: Backend Root
+            await testEndpoint('Backend Root', 'http://localhost:5000/', resultsDiv);
+            
+            // Test 2: Models Info
+            await testEndpoint('Models Info', `${API_BASE_URL}/models/info`, resultsDiv);
+            
+            // Test 3: OCR Test
+            await testEndpoint('OCR Test', `${API_BASE_URL}/test-ocr`, resultsDiv);
+            
+            // Test 4: Status
+            await testEndpoint('Status', `${API_BASE_URL}/status`, resultsDiv);
+        }
+        
+        async function testEndpoint(name, url, container) {
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test-item loading';
+            testDiv.innerHTML = `
+                <div class="status">⏳ Testing ${name}...</div>
+                <div>URL: ${url}</div>
+            `;
+            container.appendChild(testDiv);
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    testDiv.className = 'test-item success';
+                    testDiv.innerHTML = `
+                        <div class="status">✅ ${name} - SUCCESS</div>
+                        <div>Status: ${response.status} ${response.statusText}</div>
+                        <div>Response: <pre>${JSON.stringify(data, null, 2).substring(0, 300)}...</pre></div>
+                    `;
+                } else {
+                    testDiv.className = 'test-item error';
+                    testDiv.innerHTML = `
+                        <div class="status">❌ ${name} - HTTP ERROR</div>
+                        <div>Status: ${response.status} ${response.statusText}</div>
+                    `;
+                }
+            } catch (error) {
+                testDiv.className = 'test-item error';
+                testDiv.innerHTML = `
+                    <div class="status">❌ ${name} - CONNECTION ERROR</div>
+                    <div>Error: ${error.message}</div>
+                    <div>Possible causes: Backend not running, CORS issues, network problems</div>
+                `;
+            }
+        }
+        
+        function openMainApp() {
+            window.open('http://localhost:8000', '_blank');
+        }
+        
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            setTimeout(testAllConnections, 1000);
+        });
+    </script>
+</body>
+</html>

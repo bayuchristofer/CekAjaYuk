@@ -1,0 +1,29 @@
+{
+  "test_timestamp": "2025-07-05T01:00:10.581027",
+  "test_purpose": "Scientific Research Readiness",
+  "overall_readiness": 0.0,
+  "models_loaded": 0,
+  "total_models": 4,
+  "research_ready": false,
+  "detailed_results": {
+    "backend_health": {
+      "status": "error",
+      "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000019E066A5B90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))"
+    },
+    "models": {
+      "status": "error",
+      "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /api/models/info (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000019E066B40D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))"
+    },
+    "ocr": {
+      "status": "error",
+      "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /api/test-ocr (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000019E066B67D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))"
+    },
+    "dataset": {
+      "status": "error",
+      "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /api/dataset/info (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000019E066BCA10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))"
+    },
+    "frontend": {
+      "status": "error"
+    }
+  }
+}

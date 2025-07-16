@@ -1,0 +1,66 @@
+{
+  "test_timestamp": "2025-07-05T01:08:55.166032",
+  "test_purpose": "Scientific Research Readiness",
+  "overall_readiness": 100.0,
+  "models_loaded": 4,
+  "total_models": 4,
+  "research_ready": true,
+  "detailed_results": {
+    "backend_health": {
+      "status": "success",
+      "models_loaded": true,
+      "models_count": 4,
+      "ocr_available": true
+    },
+    "models": {
+      "status": "success",
+      "loaded_count": 4,
+      "total_count": 4,
+      "load_percentage": 100.0,
+      "details": {
+        "deep_learning": {
+          "loaded": true,
+          "type": "TensorFlow/Keras CNN",
+          "file": "cnn_production.h5",
+          "status": "\u2705 Ready (Production)"
+        },
+        "feature_scaler": {
+          "loaded": true,
+          "type": "StandardScaler",
+          "file": "feature_scaler_production.pkl",
+          "status": "\u2705 Ready (Production)"
+        },
+        "random_forest": {
+          "loaded": true,
+          "type": "RandomForestClassifier",
+          "file": "random_forest_production.pkl",
+          "status": "\u2705 Ready (Production)"
+        },
+        "text_vectorizer": {
+          "loaded": true,
+          "type": "TfidfVectorizer",
+          "file": "text_vectorizer_production.pkl",
+          "status": "\u2705 Ready (Production)"
+        }
+      }
+    },
+    "ocr": {
+      "status": "success",
+      "available": true,
+      "version": "5.5.0.20241111",
+      "languages": "ind+eng",
+      "ocr_status": "ready"
+    },
+    "dataset": {
+      "status": "success",
+      "type": "real",
+      "total_samples": 800,
+      "quality": "excellent",
+      "training_ready": true
+    },
+    "frontend": {
+      "status": "success",
+      "url": "http://localhost:8000"
+    }
+  }
+}

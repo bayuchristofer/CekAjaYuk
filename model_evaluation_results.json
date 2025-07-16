@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-07-05T01:51:37.413771",
+  "dataset_analysis": {
+    "total_samples": 800,
+    "genuine_samples": 400,
+    "fake_samples": 400,
+    "balance_ratio": 1.0,
+    "quality_assessment": "good",
+    "recommendation": "Dataset quality is good - consider adding more samples"
+  },
+  "model_analysis": {
+    "data_type": "synthetic",
+    "confidence": "high",
+    "recommendation": "Models trained on synthetic data - retraining with real data highly recommended"
+  },
+  "ocr_analysis": {
+    "status": "working",
+    "version": "5.5.0.20241111",
+    "languages": "ind+eng",
+    "recommendation": "OCR is working - focus on ML/DL model improvement"
+  },
+  "need_retraining": true,
+  "reasons": [
+    "Models trained on synthetic data"
+  ]
+}

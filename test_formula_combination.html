@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Formula Kombinasi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #0056b3; }
+        .score { font-weight: bold; color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>🧮 Test Formula Kombinasi ML + Text Analysis</h1>
+    
+    <div class="test-case">
+        <h3>Test Case 1: Kedua Model Tersedia</h3>
+        <p><strong>ML Score:</strong> 78% | <strong>Text Score:</strong> 56%</p>
+        <button onclick="testCase1()">Test Kombinasi</button>
+        <div id="result1" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>Test Case 2: ML Tinggi, Text Rendah</h3>
+        <p><strong>ML Score:</strong> 85% | <strong>Text Score:</strong> 45%</p>
+        <button onclick="testCase2()">Test Kombinasi</button>
+        <div id="result2" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>Test Case 3: ML Rendah, Text Tinggi</h3>
+        <p><strong>ML Score:</strong> 30% | <strong>Text Score:</strong> 80%</p>
+        <button onclick="testCase3()">Test Kombinasi</button>
+        <div id="result3" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>Test Case 4: Hanya Text Analysis</h3>
+        <p><strong>ML Score:</strong> N/A | <strong>Text Score:</strong> 65%</p>
+        <button onclick="testCase4()">Test Fallback</button>
+        <div id="result4" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        function smartCombination(mlScore, textScore) {
+            const mlWeight = 0.6;
+            const textWeight = 0.4;
+            
+            if (mlScore !== null && textScore !== null) {
+                const finalScore = Math.round((mlScore * mlWeight) + (textScore * textWeight));
+                return {
+                    score: finalScore,
+                    formula: `(${mlScore} × ${mlWeight}) + (${textScore} × ${textWeight}) = ${finalScore}`,
+                    method: 'Combined ML + Text Analysis',
+                    breakdown: {
+                        ml_contribution: Math.round(mlScore * mlWeight),
+                        text_contribution: Math.round(textScore * textWeight)
+                    }
+                };
+            } else if (textScore !== null) {
+                return {
+                    score: textScore,
+                    formula: 'Text Analysis Only',
+                    method: 'Text Analysis Only'
+                };
+            } else if (mlScore !== null) {
+                return {
+                    score: mlScore,
+                    formula: 'Machine Learning Only',
+                    method: 'Machine Learning Only'
+                };
+            } else {
+                return {
+                    score: 50,
+                    formula: 'Default Score',
+                    method: 'Default (No Analysis Available)'
+                };
+            }
+        }
+        
+        function displayResult(resultId, result) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.style.display = 'block';
+            
+            let breakdownHtml = '';
+            if (result.breakdown) {
+                breakdownHtml = `
+                    <p><strong>Breakdown Kontribusi:</strong></p>
+                    <ul>
+                        <li>ML Contribution: ${result.breakdown.ml_contribution}%</li>
+                        <li>Text Contribution: ${result.breakdown.text_contribution}%</li>
+                    </ul>
+                `;
+            }
+            
+            resultDiv.innerHTML = `
+                <p><strong>Method:</strong> ${result.method}</p>
+                <p><strong>Formula:</strong> <span class="formula">${result.formula}</span></p>
+                <p><strong>Final Score:</strong> <span class="score">${result.score}%</span></p>
+                ${breakdownHtml}
+                <p><strong>Status:</strong> ${result.score >= 80 ? '🟢 VALID' : result.score >= 40 ? '🟡 HATI-HATI' : '🔴 PALSU'}</p>
+            `;
+        }
+        
+        function testCase1() {
+            const result = smartCombination(78, 56);
+            displayResult('result1', result);
+        }
+        
+        function testCase2() {
+            const result = smartCombination(85, 45);
+            displayResult('result2', result);
+        }
+        
+        function testCase3() {
+            const result = smartCombination(30, 80);
+            displayResult('result3', result);
+        }
+        
+        function testCase4() {
+            const result = smartCombination(null, 65);
+            displayResult('result4', result);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+mean_brightness
+std_brightness
+contrast
+sharpness
+edge_density
+color_variance
+text_area_ratio
+logo_presence
+layout_symmetry
+color_harmony
+noise_level
+professional_score

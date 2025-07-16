@@ -1,0 +1,53 @@
+{
+  "health": {
+    "status": "success",
+    "models_loaded": true,
+    "models_count": 3,
+    "ocr_available": true
+  },
+  "models": {
+    "status": "success",
+    "loaded_count": 0,
+    "total_count": 4,
+    "models": {
+      "deep_learning": {
+        "error": "All import methods failed: module 'tensorflow' has no attribute 'keras', No module named 'tensorflow.compat', module 'tensorflow' has no attribute 'keras'",
+        "loaded": false,
+        "status": "\u26a0\ufe0f Found but failed to load"
+      },
+      "feature_scaler": {
+        "loaded": true,
+        "status": "\u2705 Ready",
+        "type": "StandardScaler"
+      },
+      "random_forest": {
+        "loaded": true,
+        "n_estimators": 100,
+        "status": "\u2705 Ready",
+        "type": "RandomForestClassifier"
+      },
+      "text_vectorizer": {
+        "features": 290,
+        "loaded": true,
+        "status": "\u2705 Ready",
+        "type": "TfidfVectorizer"
+      }
+    }
+  },
+  "ocr": {
+    "status": "success",
+    "available": true,
+    "version": "5.5.0.20241111",
+    "languages": "ind+eng"
+  },
+  "dataset": {
+    "status": "success",
+    "type": "real",
+    "total_samples": 800,
+    "quality": "excellent"
+  },
+  "frontend": {
+    "status": "success",
+    "url": "http://localhost:8000"
+  }
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Percentage Fix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #007bff;
+            transition: width 2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Perbaikan Persentase</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Confidence sebagai Decimal (0-1)</h3>
+        <button onclick="testDecimal()">Test Decimal (0.87)</button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress1" style="width: 0%">0%</div>
+        </div>
+        <div class="result" id="result1"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Confidence sebagai Percentage (0-100)</h3>
+        <button onclick="testPercentage()">Test Percentage (87)</button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress2" style="width: 0%">0%</div>
+        </div>
+        <div class="result" id="result2"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Confidence Tinggi (>100)</h3>
+        <button onclick="testHighValue()">Test High Value (2170)</button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress3" style="width: 0%">0%</div>
+        </div>
+        <div class="result" id="result3"></div>
+    </div>
+
+    <script>
+        // Function yang diperbaiki dari main.js
+        function normalizeConfidence(confidence) {
+            // If confidence is greater than 1, assume it's already in percentage format
+            if (confidence > 1) {
+                confidence = Math.round(confidence);
+            } else {
+                // If confidence is 0-1, convert to percentage
+                confidence = Math.round(confidence * 100);
+            }
+            
+            // Ensure confidence is within valid range (0-100)
+            confidence = Math.max(0, Math.min(100, confidence));
+            
+            return confidence;
+        }
+        
+        function updateProgress(progressId, resultId, originalValue) {
+            const progressFill = document.getElementById(progressId);
+            const resultDiv = document.getElementById(resultId);
+            
+            const normalizedValue = normalizeConfidence(originalValue);
+            
+            // Reset
+            progressFill.style.width = '0%';
+            progressFill.textContent = '0%';
+            
+            // Update color based on value
+            let color = '#dc3545'; // Red
+            if (normalizedValue >= 80) color = '#28a745'; // Green
+            else if (normalizedValue >= 40) color = '#ffc107'; // Yellow
+            
+            progressFill.style.backgroundColor = color;
+            
+            // Animate
+            setTimeout(() => {
+                progressFill.style.width = normalizedValue + '%';
+                progressFill.textContent = normalizedValue + '%';
+            }, 100);
+            
+            // Show result
+            resultDiv.innerHTML = `
+                <strong>Original Value:</strong> ${originalValue}<br>
+                <strong>Normalized:</strong> ${normalizedValue}%<br>
+                <strong>Status:</strong> ${normalizedValue >= 80 ? 'VALID' : normalizedValue >= 40 ? 'HATI-HATI' : 'PALSU'}
+            `;
+        }
+        
+        function testDecimal() {
+            updateProgress('progress1', 'result1', 0.87);
+        }
+        
+        function testPercentage() {
+            updateProgress('progress2', 'result2', 87);
+        }
+        
+        function testHighValue() {
+            updateProgress('progress3', 'result3', 2170);
+        }
+    </script>
+</body>
+</html>
