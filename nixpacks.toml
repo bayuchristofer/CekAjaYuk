@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ["tesseract", "leptonica"]
+
+[phases.install]
+cmds = [
+    "pip install --upgrade pip",
+    "pip install -r requirements.txt"
+]
+
+[phases.build]
+cmds = [
+    "python -c 'import nltk; nltk.download(\"punkt\"); nltk.download(\"stopwords\")'",
+    "mkdir -p uploads models"
+]
+
+[start]
+cmd = "gunicorn backend_working:app --host 0.0.0.0 --port $PORT --timeout 120 --workers 1"
