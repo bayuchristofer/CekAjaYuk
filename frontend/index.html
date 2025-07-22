@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CekAjaYuk - Pendeteksi Iklan Lowongan Kerja Palsu</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>CekAjaYuk</h1>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Deteksi Iklan Lowongan Kerja Palsu dengan AI</h2>
+                <p>Lindungi diri Anda dari penipuan lowongan kerja dengan teknologi Machine Learning dan Deep Learning terdepan</p>
+
+                <!-- Debug Toggle (Hidden by default) -->
+                <div class="debug-toggle" id="debugToggle" onclick="toggleSystemStatus()" title="Toggle System Status (Developer Mode)">
+                    🔧
+                </div>
+
+                <!-- System Status (Hidden by default) -->
+                <div class="system-status" id="systemStatusContainer">
+                    <div class="status-item">
+                        <span class="status-label">🤖 Backend:</span>
+                        <span class="status-value" id="backendStatus">🔄 Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">🧠 Models:</span>
+                        <span class="status-value" id="modelsStatus">🔄 Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">📊 Dataset:</span>
+                        <span class="status-value" id="datasetStatus">🔄 Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">🔍 OCR:</span>
+                        <span class="status-value" id="ocrStatus">🔄 Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <button onclick="refreshSystemStatus()" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                            🔄 Refresh Status
+                        </button>
+                    </div>
+                </div>
+
+                <button class="cta-button" onclick="scrollToUpload()">
+                    <i class="fas fa-upload"></i> Mulai Analisis
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload-section" class="upload-section">
+        <div class="container">
+            <h2>Upload Poster Lowongan Kerja</h2>
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Drag & Drop atau Klik untuk Upload</h3>
+                        <p>Format yang didukung: JPG, PNG, PDF (Max: 10MB)</p>
+                        <input type="file" id="fileInput" accept="image/*,.pdf" hidden>
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            Pilih File
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Preview Area -->
+                <div class="preview-area" id="previewArea" style="display: none;">
+                    <div class="preview-content">
+                        <img id="previewImage" src="" alt="Preview">
+                        <div class="preview-info">
+                            <h4 id="fileName"></h4>
+                            <p id="fileSize"></p>
+                            <button class="analyze-btn" onclick="startAnalysis()">
+                                <i class="fas fa-search"></i> Mulai Analisis
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analysis Progress -->
+    <section id="analysis-progress" class="analysis-section" style="display: none;">
+        <div class="container">
+            <h2>Proses Analisis</h2>
+            <div class="progress-container">
+                <div class="progress-step" id="step1">
+                    <div class="step-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Analisis ML/DL</h3>
+                        <p>Menganalisis poster dengan Random Forest & TensorFlow</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress1"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-step" id="step2">
+                    <div class="step-icon">
+                        <i class="fas fa-text-width"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Ekstraksi Teks OCR</h3>
+                        <p>Mengekstrak teks dengan Tesseract OCR</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress2"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-step" id="step3">
+                    <div class="step-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Verifikasi Teks</h3>
+                        <p>Periksa dan edit hasil OCR jika diperlukan</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress3"></div>
+                        </div>
+                    </div>
+                </div>
+                
+
+
+                <div class="progress-step" id="step4">
+                    <div class="step-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Hasil & Rekomendasi</h3>
+                        <p>Kesimpulan akhir dengan penjelasan detail dan saran</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="results-section" style="display: none;">
+        <div class="container">
+            <h2>Hasil Analisis</h2>
+            <div class="results-container">
+                <!-- ML/DL Analysis Result -->
+                <div class="result-card">
+                    <div class="result-header">
+                        <i class="fas fa-robot"></i>
+                        <h3>Analisis Machine Learning</h3>
+                    </div>
+                    <div class="result-content">
+                        <div class="confidence-meter">
+                            <div class="meter-label">Tingkat Kepercayaan</div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" id="mlConfidence"></div>
+                            </div>
+                            <div class="meter-value" id="mlConfidenceValue">0%</div>
+                        </div>
+                        <div class="result-status" id="mlResult">
+                            <span class="status-icon"></span>
+                            <span class="status-text"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OCR Text Extraction -->
+                <div class="result-card">
+                    <div class="result-header">
+                        <i class="fas fa-text-width"></i>
+                        <h3>Teks yang Diekstrak</h3>
+                    </div>
+
+                    <!-- OCR Quality Notice -->
+                    <div class="ocr-notice">
+                        <div class="notice-header">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>💡 Saran untuk Hasil OCR Maksimal</strong>
+                        </div>
+                        <div class="notice-content">
+                            <p>Untuk akurasi OCR yang lebih baik, gunakan layanan OCR khusus:</p>
+                            <div class="ocr-recommendations">
+                                <a href="https://www.onlineocr.net/" target="_blank" class="ocr-link">
+                                    <i class="fas fa-external-link-alt"></i> OnlineOCR.net
+                                </a>
+                                <a href="https://www.i2ocr.com/" target="_blank" class="ocr-link">
+                                    <i class="fas fa-external-link-alt"></i> i2OCR.com
+                                </a>
+                                <a href="https://www.newocr.com/" target="_blank" class="ocr-link">
+                                    <i class="fas fa-external-link-alt"></i> NewOCR.com
+                                </a>
+                            </div>
+                            <small>Kemudian salin hasil OCR ke area teks di bawah untuk analisis yang lebih akurat.</small>
+                        </div>
+                    </div>
+
+                    <!-- OCR Details -->
+                    <div class="ocr-details" id="ocrDetails" style="display: none;">
+                        <div class="detail-row">
+                            <span class="detail-label">🎯 Confidence:</span>
+                            <span class="detail-value" id="ocrConfidence">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">🔧 Method:</span>
+                            <span class="detail-value" id="ocrMethod">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📝 Characters:</span>
+                            <span class="detail-value" id="ocrCharCount">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">⏱️ Processing:</span>
+                            <span class="detail-value" id="ocrProcessTime">-</span>
+                        </div>
+                    </div>
+
+                    <div class="result-content">
+                        <div id="fileInfo" class="file-info-container"></div>
+                        <div class="text-editor">
+                            <textarea id="extractedText" placeholder="Teks hasil OCR akan muncul di sini..."></textarea>
+                            <div class="text-editor-controls">
+                                <button class="edit-btn" onclick="enableTextEdit()">
+                                    <i class="fas fa-edit"></i> Edit Teks
+                                </button>
+                                <button class="save-btn" onclick="saveTextEdit()" style="display: none;">
+                                    <i class="fas fa-save"></i> Simpan
+                                </button>
+                                <button class="reanalyze-btn" onclick="reanalyzeWithEditedText()" style="display: none;">
+                                    <i class="fas fa-sync-alt"></i> Analisis Ulang Teks
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Text Analysis Progress -->
+                        <div class="text-analysis-section" id="textAnalysisSection" style="display: none;">
+                            <div class="analysis-header">
+                                <h4><i class="fas fa-search"></i> Hasil Analisis Teks</h4>
+                            </div>
+                            <div class="confidence-meter">
+                                <div class="meter-label">
+                                    <span>Tingkat Kepercayaan</span>
+                                    <span class="meter-value" id="textAnalysisPercentage">0%</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-fill" id="textAnalysisProgressFill" style="width: 0%"></div>
+                                </div>
+                                <div class="analysis-status" id="textAnalysisStatus">
+                                    <span class="status-icon">⏳</span>
+                                    <span class="status-text">Menunggu analisis...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- Final Result -->
+                <div class="result-card final-result">
+                    <div class="result-header">
+                        <i class="fas fa-certificate"></i>
+                        <h3>Hasil Akhir</h3>
+                    </div>
+                    <div class="result-content">
+                        <div class="final-status" id="finalResult">
+                            <div class="status-icon-large"></div>
+                            <div class="status-text-large"></div>
+                            <div class="status-description"></div>
+                        </div>
+
+                        <!-- Threshold Information -->
+                        <div class="threshold-info">
+                            <h4>📊 Interpretasi Hasil:</h4>
+                            <div class="threshold-legend">
+                                <div class="threshold-item fake">
+                                    <div class="threshold-color"></div>
+                                    <div class="threshold-text">
+                                        <strong>&lt; 40%</strong> - Lowongan Kerja PALSU
+                                        <small>Kemungkinan besar penipuan, hindari</small>
+                                    </div>
+                                </div>
+                                <div class="threshold-item uncertain">
+                                    <div class="threshold-color"></div>
+                                    <div class="threshold-text">
+                                        <strong>40% - 80%</strong> - Perlu HATI-HATI
+                                        <small>Verifikasi mandiri diperlukan</small>
+                                    </div>
+                                </div>
+                                <div class="threshold-item genuine">
+                                    <div class="threshold-color"></div>
+                                    <div class="threshold-text">
+                                        <strong>&gt; 80%</strong> - Lowongan Kerja VALID/ASLI
+                                        <small>Kemungkinan besar legitimate</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="download-btn" onclick="downloadReport()">
+                                <i class="fas fa-download"></i> Download Laporan
+                            </button>
+                            <button class="new-analysis-btn" onclick="resetAnalysis()">
+                                <i class="fas fa-plus"></i> Analisis Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Menganalisis...</h3>
+            <p id="loadingText">Memproses gambar...</p>
+        </div>
+    </div>
+
+    <script src="static/js/main.js"></script>
+</body>
+</html>
