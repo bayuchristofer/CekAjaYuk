@@ -266,12 +266,30 @@ def check_tesseract():
         return False
 
 def load_models():
-    """Load all available models"""
+    """Load all available models with VPS optimization"""
     global rf_model, feature_scaler, text_vectorizer, dl_model, models_status, models_loaded_count
 
     import joblib
+    import gc  # Garbage collection for memory management
     models_dir = Path('models')
     loaded_count = 0
+
+    logger.info("🔄 Starting model loading with VPS optimization...")
+
+    # Check available memory (if psutil is available)
+    try:
+        import psutil
+        memory = psutil.virtual_memory()
+        logger.info(f"💾 Available memory: {memory.available / (1024**3):.1f} GB")
+        if memory.available < 1 * 1024**3:  # Less than 1GB
+            logger.warning("⚠️ Low memory detected, using conservative loading")
+    except ImportError:
+        logger.info("💾 Memory monitoring not available (psutil not installed)")
+
+    # Ensure models directory exists
+    if not models_dir.exists():
+        logger.error(f"❌ Models directory not found: {models_dir}")
+        return loaded_count
 
     # Load Random Forest (RETRAINED Model with Better Accuracy)
     rf_files = [
@@ -347,80 +365,72 @@ def load_models():
             except Exception as e:
                 logger.error(f"❌ Failed to load {vec_file}: {e}")
 
-    # Try to load Deep Learning model (Production Model)
+    # Skip Deep Learning model for VPS optimization (load on demand)
+    # CNN models are memory-intensive and can be loaded lazily
+    models_status['deep_learning'] = {
+        'loaded': False,
+        'status': '⏳ Lazy Loading (Load on Demand)',
+        'note': 'CNN model will be loaded when needed to save memory'
+    }
+    logger.info("⏳ Deep Learning model set for lazy loading")
+
+    models_loaded_count = loaded_count
+    logger.info(f"📊 Total models loaded: {loaded_count}/4 (CNN model available for lazy loading)")
+
+    # Force garbage collection to free memory
+    import gc
+    gc.collect()
+
+    return loaded_count
+
+def load_cnn_model_lazy():
+    """Load CNN model on demand (lazy loading)"""
+    global dl_model
+
+    if dl_model is not None:
+        return dl_model
+
+    logger.info("🔄 Loading CNN model on demand...")
+
+    models_dir = Path('models')
     dl_files = [
-        'cnn_production.h5',  # New production model
-        'cnn_best_real.h5'  # Fallback
+        'cnn_production.h5',
+        'cnn_best_real.h5'
     ]
 
     for dl_file in dl_files:
         dl_path = models_dir / dl_file
         if dl_path.exists():
             try:
-                # Try multiple import methods for TensorFlow/Keras
-                dl_model = None
+                # Try tensorflow.keras with memory optimization
+                import tensorflow as tf
 
-                # Method 1: Try tensorflow.keras
+                # Configure TensorFlow for memory efficiency
                 try:
-                    import tensorflow as tf
-                    dl_model = tf.keras.models.load_model(str(dl_path))
-                    logger.info("✅ Deep Learning model loaded via tensorflow.keras")
-                except Exception as e1:
-                    logger.debug(f"tensorflow.keras failed: {e1}")
+                    gpus = tf.config.experimental.list_physical_devices('GPU')
+                    if gpus:
+                        tf.config.experimental.set_memory_growth(gpus[0], True)
+                except:
+                    pass  # GPU config not critical
 
-                    # Method 2: Try standalone keras
-                    try:
-                        import keras
-                        dl_model = keras.models.load_model(str(dl_path))
-                        logger.info("✅ Deep Learning model loaded via standalone keras")
-                    except Exception as e2:
-                        logger.debug(f"standalone keras failed: {e2}")
+                dl_model = tf.keras.models.load_model(str(dl_path), compile=False)
 
-                        # Method 3: Try with custom objects
-                        try:
-                            import tensorflow as tf
-                            dl_model = tf.keras.models.load_model(str(dl_path), compile=False)
-                            logger.info("✅ Deep Learning model loaded without compilation")
-                        except Exception as e3:
-                            logger.debug(f"load without compile failed: {e3}")
-                            raise Exception(f"All import methods failed: {e1}, {e2}, {e3}")
-
-                if dl_model is not None:
-                    models_status['deep_learning'] = {
-                        'loaded': True,
-                        'status': '✅ Ready (Production)',
-                        'type': 'TensorFlow/Keras CNN',
-                        'input_shape': str(dl_model.input_shape) if hasattr(dl_model, 'input_shape') else 'Unknown',
-                        'model_file': dl_file
-                    }
-                    loaded_count += 1
-                    logger.info(f"✅ Deep Learning model loaded from {dl_file}")
-                    break  # Exit loop if successful
-                else:
-                    raise Exception("Model loading returned None")
-
-            except Exception as e:
-                logger.warning(f"⚠️ Deep Learning model {dl_file} failed to load: {e}")
                 models_status['deep_learning'] = {
-                    'loaded': False,
-                    'status': '⚠️ Found but failed to load',
-                    'error': str(e),
+                    'loaded': True,
+                    'status': '✅ Ready (Lazy Loaded)',
+                    'type': 'TensorFlow/Keras CNN',
                     'model_file': dl_file
                 }
-                continue  # Try next file
 
-    # If no deep learning model loaded, set final status
-    if dl_model is None:
-        models_status['deep_learning'] = {
-            'loaded': False,
-            'status': '❌ Not Available',
-            'error': 'No compatible deep learning model found'
-        }
+                logger.info(f"✅ CNN model lazy loaded from {dl_file}")
+                return dl_model
 
-    models_loaded_count = loaded_count
-    logger.info(f"📊 Total models loaded: {loaded_count}/4")
+            except Exception as e:
+                logger.warning(f"⚠️ Failed to lazy load {dl_file}: {e}")
+                continue
 
-    return loaded_count
+    logger.error("❌ No CNN model could be loaded")
+    return None
 
 def initialize_app():
     """Initialize application components"""

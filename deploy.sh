@@ -46,10 +46,29 @@ echo "🔧 Creating Python virtual environment..."
 python3.11 -m venv venv
 source venv/bin/activate
 
-# Install Python dependencies
+# Install Python dependencies with VPS optimization
 echo "📦 Installing Python packages..."
 pip install --upgrade pip
-pip install -r requirements.txt
+
+# Install packages one by one to handle memory constraints
+echo "📦 Installing core packages..."
+pip install Flask==2.3.3 Flask-CORS==4.0.0
+pip install numpy==1.24.3 pandas==2.0.3
+pip install Pillow==10.0.1 opencv-python==4.8.1.78
+
+echo "📦 Installing ML packages..."
+pip install scikit-learn==1.3.0 joblib==1.3.2
+pip install matplotlib==3.7.2 seaborn==0.12.2
+
+echo "📦 Installing TensorFlow (this may take a while)..."
+pip install tensorflow==2.13.0
+
+echo "📦 Installing OCR and server packages..."
+pip install pytesseract==0.3.10
+pip install Werkzeug==2.3.7 gunicorn==21.2.0
+
+# Install optional monitoring package
+pip install psutil || echo "⚠️ psutil installation failed (optional)"
 
 # Set environment variables
 echo "⚙️ Setting up environment..."

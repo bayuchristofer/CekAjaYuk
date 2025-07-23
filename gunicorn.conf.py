@@ -6,16 +6,16 @@ import os
 bind = f"0.0.0.0:{os.environ.get('PORT', '5001')}"
 backlog = 2048
 
-# Worker processes
-workers = multiprocessing.cpu_count() * 2 + 1
+# Worker processes (VPS optimized)
+workers = 2  # Reduced for VPS memory constraints
 worker_class = "sync"
-worker_connections = 1000
+worker_connections = 500  # Reduced for VPS
 timeout = 120
 keepalive = 2
 
 # Restart workers after this many requests, to help prevent memory leaks
-max_requests = 1000
-max_requests_jitter = 100
+max_requests = 500  # Reduced for VPS
+max_requests_jitter = 50
 
 # Logging
 accesslog = "/var/log/cekajayuk/access.log"
